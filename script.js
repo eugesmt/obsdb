@@ -1,29 +1,22 @@
 async function getWeather() {
-    const apiKey = 'YOUR_API_KEY'; // Замените на ваш API-ключ OpenWeatherMap
-    const city = document.getElementById('city').value;
+    const city = document.getElementById('city').value.trim();
     const weatherResult = document.getElementById('weather-result');
 
     if (!city) {
-        weatherResult.innerHTML = 'Please enter a city name.';
+        weatherResult.textContent = 'Please enter a city name.';
         return;
     }
 
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+    const url = `https://wttr.in/${city}?format=%l:+%c+%t\n`;
 
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error('City not found');
+            throw new Error('Failed to fetch weather information');
         }
-        const data = await response.json();
-        const { main, weather } = data;
-        weatherResult.innerHTML = `
-            <p><strong>${data.name}</strong></p>
-            <p>${weather[0].description}</p>
-            <p>Temperature: ${main.temp}°C</p>
-            <p>Humidity: ${main.humidity}%</p>
-        `;
+        const data = await response.text();
+        weatherResult.textContent = data;
     } catch (error) {
-        weatherResult.innerHTML = 'Error: ' + error.message;
+        weatherResult.textContent = 'Error: ' + error.message;
     }
 }
